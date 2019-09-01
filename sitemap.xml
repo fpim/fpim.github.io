@@ -10,10 +10,6 @@
   <lastmod>2019-09-01T05:33:00Z</lastmod>
  </url>
  <url>
-  <loc>https://fpim.github.io/2012/</loc>
-  <lastmod>2019-08-31T12:34:00Z</lastmod>
- </url>
- <url>
   <loc>https://fpim.github.io/2019/</loc>
   <lastmod>2019-09-01T05:33:00Z</lastmod>
  </url>
@@ -23,27 +19,7 @@
  </url>
  <url>
   <loc>https://fpim.github.io/categories/</loc>
-  <lastmod>2019-08-31T12:34:00Z</lastmod>
- </url>
- <url>
-  <loc>https://fpim.github.io/categories/blog/</loc>
-  <lastmod>2019-08-31T12:34:00Z</lastmod>
- </url>
- <url>
-  <loc>https://fpim.github.io/categories/cat_nikola/</loc>
-  <lastmod>2019-08-31T12:34:00Z</lastmod>
- </url>
- <url>
-  <loc>https://fpim.github.io/categories/demo/</loc>
-  <lastmod>2019-08-31T12:34:00Z</lastmod>
- </url>
- <url>
-  <loc>https://fpim.github.io/categories/nikola/</loc>
-  <lastmod>2019-08-31T12:34:00Z</lastmod>
- </url>
- <url>
-  <loc>https://fpim.github.io/categories/python/</loc>
-  <lastmod>2019-08-31T12:34:00Z</lastmod>
+  <lastmod>2019-09-01T05:38:00Z</lastmod>
  </url>
  <url>
   <loc>https://fpim.github.io/galleries/</loc>
@@ -124,9 +100,5 @@
  <url>
   <loc>https://fpim.github.io/posts/easy-and-effective-python-type-checker/</loc>
   <lastmod>2019-09-01T05:33:00Z</lastmod>
- </url>
- <url>
-  <loc>https://fpim.github.io/posts/welcome-to-nikola/</loc>
-  <lastmod>2019-08-31T12:34:00Z</lastmod>
  </url>
 </urlset>

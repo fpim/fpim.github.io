@@ -62,9 +62,8 @@
             <hr></header><div class="e-content entry-content">
         <div>
 <h2>The Problem</h2>
-<p>Types has been handled by python in an implicit way. Flexible as it may seems, developers often
-find it causing confusions when managing a large project, especially for those coming form a 
-strongly typed language.</p>
+<p>Types have been implicitly handled by python. Flexible as it may seem, developers often find it causing confusions 
+when managing a large project, especially for those coming from a strongly typed language.</p>
 <h3>Annotation</h3>
 <p>Newer versions of python (3.5+) allow you to put type hints into at function definition. 
 However type checking is not supported by python and it is up to python developer to implement 
@@ -77,12 +76,11 @@ functionality, for example using decorators or metaclasses. Using type hints
 for performance optimizations is left as an exercise for the reader.</p>
 </blockquote>
 <p>Although there are open source libraries like <a href="http://mypy-lang.org/">mypy</a> 
-that do type checking for you, this article aims to present you with the 
-minimum knowledge you need to know (and a hack) for you to implement you own type checking, if you want to 
-avoid the unnecessary dependencies brought by a full blown library.</p>
+that do type checking for you, this article aims to present you with the minimum knowledge you need to know (and a hack) 
+for you to implement your own type checking, if you want to avoid the unnecessary dependencies brought by a full-blown library.</p>
 <h4>The Basic Type Hinting</h4>
 <p>The following function intends to take two integer as arguments and return the sum of them,
- you can specify type of the function arguments by adding <code>:type</code> and type of return value by adding <code>-&gt;type</code>:</p>
+ you can specify the type of the function arguments by adding <code>:type</code> and type of return value by adding <code>-&gt;type</code>:</p>
 <pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 
@@ -222,7 +220,7 @@ which the notoriously slow.</p>
 
 
 <p>Adding a function decorator add a little overhead while the type checker 
-put hugh overhead onto the original function. It is due to that the <code>bind_partial</code> method
+put huge overhead onto the original function. It is due to that the <code>bind_partial</code> method
 dynamically analyses where <code>*args</code> and <code>**kwarg</code> would be mapped to the signature, in native python code, while the handling of
 <code>*args</code> and <code>**kwarg</code> of an actual function call is optimized in c, now what if we can leverage that?</p>
 <h4>The Hack</h4>
@@ -349,10 +347,12 @@ and construct assert statement dynamically, let's put it all together:</p>
 that adding a "useless" decorator (invoking one extra function) adds 0.017 second of overhead, 
 we achieved 0.07 second with essentially two extra function invoked with <code>fast_tc_add</code>.</p>
 <h4>Hack 2 - auto type check</h4>
-<p>Adding a decorator to every function you have written is very, very ugly. What if we can:
-1. At the end of each module, access all variables decleared in the local scrope.
-2. For all variables belongs to the "current" mudule and is function type:
-3. Wrap those functions with the type_check decorator.</p>
+<p>Adding a decorator to every function you have written is very, very ugly. What if we can:</p>
+<ol>
+<li>At the end of each module, access all variables declared in the local scope.</li>
+<li>For all variables belongs to the "current" module and is function type:</li>
+<li>Wrap those functions with the type_check decorator.</li>
+</ol>
 <p>Save the following as <code>tc.py</code>:</p>
 <pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">typing</span>

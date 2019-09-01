@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>from python import me</title><link>https://fpim.github.io/</link><description>python tricks and tips</description><atom:link href="https://fpim.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:frompythonimportme@gmail.com"&gt;fyim&lt;/a&gt; </copyright><lastBuildDate>Sun, 01 Sep 2019 05:41:39 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Easy (and effective) python type checker</title><link>https://fpim.github.io/posts/easy-and-effective-python-type-checker/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;h2&gt;The Problem&lt;/h2&gt;
-&lt;p&gt;Types has been handled by python in an implicit way. Flexible as it may seems, developers often
-find it causing confusions when managing a large project, especially for those coming form a 
-strongly typed language.&lt;/p&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>from python import me</title><link>https://fpim.github.io/</link><description>python tricks and tips</description><atom:link href="https://fpim.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:frompythonimportme@gmail.com"&gt;fyim&lt;/a&gt; </copyright><lastBuildDate>Sun, 01 Sep 2019 06:41:46 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Easy (and effective) python type checker</title><link>https://fpim.github.io/posts/easy-and-effective-python-type-checker/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;h2&gt;The Problem&lt;/h2&gt;
+&lt;p&gt;Types have been implicitly handled by python. Flexible as it may seem, developers often find it causing confusions 
+when managing a large project, especially for those coming from a strongly typed language.&lt;/p&gt;
 &lt;h3&gt;Annotation&lt;/h3&gt;
 &lt;p&gt;Newer versions of python (3.5+) allow you to put type hints into at function definition. 
 However type checking is not supported by python and it is up to python developer to implement 
@@ -15,12 +14,11 @@ functionality, for example using decorators or metaclasses. Using type hints
 for performance optimizations is left as an exercise for the reader.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;Although there are open source libraries like &lt;a href="http://mypy-lang.org/"&gt;mypy&lt;/a&gt; 
-that do type checking for you, this article aims to present you with the 
-minimum knowledge you need to know (and a hack) for you to implement you own type checking, if you want to 
-avoid the unnecessary dependencies brought by a full blown library.&lt;/p&gt;
+that do type checking for you, this article aims to present you with the minimum knowledge you need to know (and a hack) 
+for you to implement your own type checking, if you want to avoid the unnecessary dependencies brought by a full-blown library.&lt;/p&gt;
 &lt;h4&gt;The Basic Type Hinting&lt;/h4&gt;
 &lt;p&gt;The following function intends to take two integer as arguments and return the sum of them,
- you can specify type of the function arguments by adding &lt;code&gt;:type&lt;/code&gt; and type of return value by adding &lt;code&gt;-&amp;gt;type&lt;/code&gt;:&lt;/p&gt;
+ you can specify the type of the function arguments by adding &lt;code&gt;:type&lt;/code&gt; and type of return value by adding &lt;code&gt;-&amp;gt;type&lt;/code&gt;:&lt;/p&gt;
 &lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;
 
@@ -160,7 +158,7 @@ which the notoriously slow.&lt;/p&gt;
 
 
 &lt;p&gt;Adding a function decorator add a little overhead while the type checker 
-put hugh overhead onto the original function. It is due to that the &lt;code&gt;bind_partial&lt;/code&gt; method
+put huge overhead onto the original function. It is due to that the &lt;code&gt;bind_partial&lt;/code&gt; method
 dynamically analyses where &lt;code&gt;*args&lt;/code&gt; and &lt;code&gt;**kwarg&lt;/code&gt; would be mapped to the signature, in native python code, while the handling of
 &lt;code&gt;*args&lt;/code&gt; and &lt;code&gt;**kwarg&lt;/code&gt; of an actual function call is optimized in c, now what if we can leverage that?&lt;/p&gt;
 &lt;h4&gt;The Hack&lt;/h4&gt;
@@ -287,10 +285,12 @@ and construct assert statement dynamically, let's put it all together:&lt;/p&gt;
 that adding a "useless" decorator (invoking one extra function) adds 0.017 second of overhead, 
 we achieved 0.07 second with essentially two extra function invoked with &lt;code&gt;fast_tc_add&lt;/code&gt;.&lt;/p&gt;
 &lt;h4&gt;Hack 2 - auto type check&lt;/h4&gt;
-&lt;p&gt;Adding a decorator to every function you have written is very, very ugly. What if we can:
-1. At the end of each module, access all variables decleared in the local scrope.
-2. For all variables belongs to the "current" mudule and is function type:
-3. Wrap those functions with the type_check decorator.&lt;/p&gt;
+&lt;p&gt;Adding a decorator to every function you have written is very, very ugly. What if we can:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;At the end of each module, access all variables declared in the local scope.&lt;/li&gt;
+&lt;li&gt;For all variables belongs to the "current" module and is function type:&lt;/li&gt;
+&lt;li&gt;Wrap those functions with the type_check decorator.&lt;/li&gt;
+&lt;/ol&gt;
 &lt;p&gt;Save the following as &lt;code&gt;tc.py&lt;/code&gt;:&lt;/p&gt;
 &lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;inspect&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;typing&lt;/span&gt;

@@ -117,7 +117,7 @@ add(1,2)
 add('1',2)
 #Traceback (most recent call last):
 #  File "<stdin>", line 1, in <module>
-#  File "/Users/louisng/PycharmProjects/aw/shit.py", line 37, in wrapped
+#  File "/Projects/aw/shit.py", line 37, in wrapped
 #    assert all(isinstance(arguments[k],v) for k,v in annotation.items())
 #AssertionError
 ```
@@ -387,9 +387,9 @@ Result:
 3
 Traceback (most recent call last):
 
-  File "/Users/louisng/PycharmProjects/aw/test.py", line 17, in <module>
+  File "/Projects/aw/test.py", line 17, in <module>
     print(otherotherfunc('nah','got string'))
-  File "/Users/louisng/PycharmProjects/aw/tc.py", line 20, in deced
+  File "/Projects/aw/tc.py", line 20, in deced
     func(*args,**kwargs)
   File "<string>", line 3, in magic_func
 AssertionError

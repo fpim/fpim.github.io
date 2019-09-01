@@ -12,9 +12,8 @@
 
 #The Problem
 
-Types has been handled by python in an implicit way. Flexible as it may seems, developers often
-find it causing confusions when managing a large project, especially for those coming form a 
-strongly typed language.
+Types have been implicitly handled by python. Flexible as it may seem, developers often find it causing confusions 
+when managing a large project, especially for those coming from a strongly typed language.
 
 ##Annotation
 
@@ -29,14 +28,14 @@ functionality, for example using decorators or metaclasses. Using type hints
 for performance optimizations is left as an exercise for the reader.
 
 Although there are open source libraries like [mypy](http://mypy-lang.org/) 
-that do type checking for you, this article aims to present you with the 
-minimum knowledge you need to know (and a hack) for you to implement you own type checking, if you want to 
-avoid the unnecessary dependencies brought by a full blown library.
+that do type checking for you, this article aims to present you with the minimum knowledge you need to know (and a hack) 
+for you to implement your own type checking, if you want to avoid the unnecessary dependencies brought by a full-blown library.
+
  
 ###The Basic Type Hinting
  
  The following function intends to take two integer as arguments and return the sum of them,
- you can specify type of the function arguments by adding `:type` and type of return value by adding `->type`:
+ you can specify the type of the function arguments by adding `:type` and type of return value by adding `->type`:
  
 ```python
 def add(a:int, b:int)->int:
@@ -185,7 +184,7 @@ Result:
 ```
 
 Adding a function decorator add a little overhead while the type checker 
-put hugh overhead onto the original function. It is due to that the `bind_partial` method
+put huge overhead onto the original function. It is due to that the `bind_partial` method
 dynamically analyses where `*args` and `**kwarg` would be mapped to the signature, in native python code, while the handling of
 `*args` and `**kwarg` of an actual function call is optimized in c, now what if we can leverage that?
 
@@ -319,8 +318,9 @@ we achieved 0.07 second with essentially two extra function invoked with `fast_t
 ### Hack 2 - auto type check
 
 Adding a decorator to every function you have written is very, very ugly. What if we can:
-1. At the end of each module, access all variables decleared in the local scrope.
-2. For all variables belongs to the "current" mudule and is function type:
+
+1. At the end of each module, access all variables declared in the local scope.
+2. For all variables belongs to the "current" module and is function type:
 3. Wrap those functions with the type_check decorator.
 
 Save the following as `tc.py`:

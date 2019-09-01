@@ -158,7 +158,7 @@ use it together with the annotation information to create a simple function deco
 <span class="n">add</span><span class="p">(</span><span class="s1">'1'</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="c1">#Traceback (most recent call last):</span>
 <span class="c1">#  File "&lt;stdin&gt;", line 1, in &lt;module&gt;</span>
-<span class="c1">#  File "/Users/louisng/PycharmProjects/aw/shit.py", line 37, in wrapped</span>
+<span class="c1">#  File "/Projects/aw/shit.py", line 37, in wrapped</span>
 <span class="c1">#    assert all(isinstance(arguments[k],v) for k,v in annotation.items())</span>
 <span class="c1">#AssertionError</span>
 </pre>
@@ -415,9 +415,9 @@ we achieved 0.07 second with essentially two extra function invoked with <code>f
 <span class="mi">3</span>
 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
 
-  <span class="n">File</span> <span class="s2">"/Users/louisng/PycharmProjects/aw/test.py"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">17</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+  <span class="n">File</span> <span class="s2">"/Projects/aw/test.py"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">17</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
     <span class="k">print</span><span class="p">(</span><span class="n">otherotherfunc</span><span class="p">(</span><span class="s1">'nah'</span><span class="p">,</span><span class="s1">'got string'</span><span class="p">))</span>
-  <span class="n">File</span> <span class="s2">"/Users/louisng/PycharmProjects/aw/tc.py"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">20</span><span class="p">,</span> <span class="ow">in</span> <span class="n">deced</span>
+  <span class="n">File</span> <span class="s2">"/Projects/aw/tc.py"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">20</span><span class="p">,</span> <span class="ow">in</span> <span class="n">deced</span>
     <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
   <span class="n">File</span> <span class="s2">"&lt;string&gt;"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">3</span><span class="p">,</span> <span class="ow">in</span> <span class="n">magic_func</span>
 <span class="ne">AssertionError</span>

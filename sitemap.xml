@@ -7,15 +7,19 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://fpim.github.io/</loc>
-  <lastmod>2019-08-31T12:34:00Z</lastmod>
+  <lastmod>2019-09-01T05:33:00Z</lastmod>
  </url>
  <url>
   <loc>https://fpim.github.io/2012/</loc>
   <lastmod>2019-08-31T12:34:00Z</lastmod>
  </url>
  <url>
+  <loc>https://fpim.github.io/2019/</loc>
+  <lastmod>2019-09-01T05:33:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://fpim.github.io/archive.html</loc>
-  <lastmod>2019-08-31T13:13:00Z</lastmod>
+  <lastmod>2019-09-01T05:33:00Z</lastmod>
  </url>
  <url>
   <loc>https://fpim.github.io/categories/</loc>
@@ -116,6 +120,10 @@
  <url>
   <loc>https://fpim.github.io/pages/theming/</loc>
   <lastmod>2019-08-31T12:34:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://fpim.github.io/posts/easy-and-effective-python-type-checker/</loc>
+  <lastmod>2019-09-01T05:33:00Z</lastmod>
  </url>
  <url>
   <loc>https://fpim.github.io/posts/welcome-to-nikola/</loc>

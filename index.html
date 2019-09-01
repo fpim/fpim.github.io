@@ -251,7 +251,23 @@ dynamically analyses where <code>*args</code> and <code>**kwarg</code> would be 
 
 
 <p>Yes, <code>exec</code> is used here. The trick is to compile a function with signature that follows the target function's,
-and construct assert statement dynamically, let's put it all together:</p>
+and construct assert statement dynamically, so that the string</p>
+<pre class="code literal-block"><span></span><span class="n">fn_s</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">def magic_func {0}:</span>
+<span class="s2">    {1}</span>
+<span class="s2">                """</span>
+</pre>
+
+
+<p>got formatted to:</p>
+<pre class="code literal-block"><span></span><span class="c1">#def magic_func (a: int, b: int) -&gt; int:</span>
+<span class="c1">#    assert isinstance(a,int) and isinstance(b,int)</span>
+</pre>
+
+
+<p>The string is then evaluated by the <code>exec</code> statement.</p>
+<p>The new function defined in the local scope is then accessable with <code>locals()['magic_func']</code>.</p>
+<p>Let's put it all together:</p>
 <pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">timeit</span> <span class="kn">import</span> <span class="n">timeit</span>
 <span class="kn">import</span> <span class="nn">typing</span>

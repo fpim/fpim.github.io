@@ -217,7 +217,27 @@ def type_check_fast(fn):
 ```
 
 Yes, `exec` is used here. The trick is to compile a function with signature that follows the target function's,
-and construct assert statement dynamically, let's put it all together:
+and construct assert statement dynamically, so that the string
+
+```python
+fn_s = """
+def magic_func {0}:
+    {1}
+                """
+```
+
+got formatted to:
+
+```python
+#def magic_func (a: int, b: int) -> int:
+#    assert isinstance(a,int) and isinstance(b,int)
+```
+
+The string is then evaluated by the `exec` statement.
+
+The new function defined in the local scope is then accessable with `locals()['magic_func']`.
+
+Let's put it all together:
 
 ```python
 import inspect

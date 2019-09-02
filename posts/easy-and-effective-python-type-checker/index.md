@@ -414,3 +414,4 @@ Traceback (most recent call last):
   File "<string>", line 3, in magic_func
 AssertionError
 ```
+Source code of this post can be found [here](https://github.com/fpim/type_checker).

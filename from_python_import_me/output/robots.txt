@@ -1,0 +1,4 @@
+Sitemap: https://fpim.github.io/sitemapindex.xml
+
+User-Agent: *
+Host: fpim.github.io

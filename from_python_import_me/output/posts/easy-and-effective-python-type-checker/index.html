@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Easy (and effective) python type checker | from python import me</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://fpim.github.io/posts/easy-and-effective-python-type-checker/">
+<!--[if lt IE 9]>
+            <script src="../../assets/js/html5shiv.min.js"></script>
+            <script src="../../assets/js/respond.min.js"></script>
+        <![endif]--><meta name="author" content="fyim">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-default header-panel shadow-z-3" role="navigation"><div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-3">
+            <h1 class="title-blog">
+                <a href="https://fpim.github.io/">
+                        <span id="blog-title">from python import me</span>
+                    </a>
+            </h1>
+          </div>
+          <div class="col-xs-9">
+            <a id="hamburger" class="btn btn-raised" href="javascript:void(0);" onclick="menuToggle();">☰</a>
+          </div>
+        </div>
+      </div>
+<!-- /.container-fluid -->
+</nav><div class="container-fluid main" id="content" role="main">
+        <div class="row">
+            <nav class="col-xs-12 col-sm-3 menu"><ul>
+<li class="withripple"><a href="../../archive.html">Archive</a></li>
+                <li class="withripple"><a href="../../categories/">Tags</a></li>
+                <li class="withripple"><a href="../../rss.xml">RSS feed</a></li>
+
+                    
+                </ul>
+<ul></ul></nav><div class="posts-material col-xs-12 col-sm-9">
+                <div class="col-xs-12 col-md-11 content-material">
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Easy (and effective) python type checker</a></h1>
+<hr>
+<div class="metadata">
+            <span class="byline author vcard">
+                <a href=".">
+                        <i class="mdi-action-face-unlock"></i>
+                    fyim
+                </a>
+            </span>
+            <span class="dateline">
+                <a href="." rel="bookmark"><i class="mdi-device-access-time"></i>
+                    <time class="published dt-published" datetime="2019-09-01T13:25:58+08:00" itemprop="datePublished" title="2019-09-01 13:25">2019-09-01 13:25</time></a>
+            </span>
+                <span class="commentline">            <a href="#disqus_thread" data-disqus-identifier="cache/posts/easy-and-effective-python-type-checker.html">Comments</a>
+
+</span>
+        </div>
+        
+        <hr></header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<h2>The Problem</h2>
+<p>Types have been implicitly handled by python. Flexible as it may seem, developers often find it causing confusions 
+when managing a large project, especially for those coming from a strongly typed language.</p>
+<h3>Annotation</h3>
+<p>Newer versions of python (3.5+) allow you to put type hints into at function definition. 
+However type checking is not supported by python and it is up to python developer to implement 
+their own runtime type checking functionality, according to <a href="https://www.python.org/dev/peps/pep-0484/#non-goals">PEP 484</a>:</p>
+<blockquote>
+<p>While the proposed typing module will contain some building blocks for runtime 
+type checking -- in particular the get_type_hints() function -- third party 
+packages would have to be developed to implement specific runtime type checking 
+functionality, for example using decorators or metaclasses. Using type hints 
+for performance optimizations is left as an exercise for the reader.</p>
+</blockquote>
+<p>Although there are open source libraries like <a href="http://mypy-lang.org/">mypy</a> 
+that do type checking for you, this article aims to present you with the minimum knowledge you need to know (and a hack) 
+for you to implement your own type checking, if you want to avoid the unnecessary dependencies brought by a full-blown library.</p>
+<h4>The Basic Type Hinting</h4>
+<p>The following function intends to take two integer as arguments and return the sum of them,
+ you can specify the type of the function arguments by adding <code>:type</code> and type of return value by adding <code>-&gt;type</code>:</p>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># 3</span>
+</pre>
+
+
+<p>However python did next to nothing with the type of value you passed in:</p>
+<pre class="code literal-block"><span></span><span class="n">add</span><span class="p">(</span><span class="s1">'nah '</span><span class="p">,</span> <span class="s1">'i dont care'</span><span class="p">)</span>
+<span class="c1"># 'nah i dont care'</span>
+</pre>
+
+
+<p>In fact what python did is that it added the type hinting information into the function's 
+<code>__annotations__</code> attribute:</p>
+<pre class="code literal-block"><span></span><span class="nv">add</span>.<span class="nv">__annotations__</span>
+# {<span class="s1">'</span><span class="s">a</span><span class="s1">'</span>: <span class="o">&lt;</span><span class="nv">class</span> <span class="s1">'</span><span class="s">int</span><span class="s1">'</span><span class="o">&gt;</span>, <span class="s1">'</span><span class="s">b</span><span class="s1">'</span>: <span class="o">&lt;</span><span class="nv">class</span> <span class="s1">'</span><span class="s">int</span><span class="s1">'</span><span class="o">&gt;</span>, <span class="s1">'</span><span class="s">return</span><span class="s1">'</span>: <span class="o">&lt;</span><span class="nv">class</span> <span class="s1">'</span><span class="s">int</span><span class="s1">'</span><span class="o">&gt;</span>}
+</pre>
+
+
+<p>Accessing magic function is bad, sometime it doesn't handle edge cases, fortunately the <code>typing</code> module comes with a 
+handy function <code>get_type_hints</code> for you to access object's annotations:</p>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">typing</span>
+<span class="n">typing</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+<span class="c1"># {'a': &lt;class 'int'&gt;, 'b': &lt;class 'int'&gt;, 'return': &lt;class 'int'&gt;}</span>
+</pre>
+
+
+<h4>Signature</h4>
+<p>To preform type checking, you will need to analyse the functions' signature in runtime. The <code>inspect.signature</code> module 
+provides you with a convenient utility (<a href="https://docs.python.org/3/library/inspect.html#inspect.Signature">Signature object</a>) to do so.</p>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+<span class="n">sig</span>
+<span class="o">&lt;</span><span class="n">Signature</span> <span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="o">&gt;</span>
+<span class="n">sig</span><span class="o">.</span><span class="n">bind_partial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># &lt;BoundArguments (a=1, b=2)&gt;</span>
+<span class="n">sig</span><span class="o">.</span><span class="n">bind_partial</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># &lt;BoundArguments (a=2, b=2)&gt;</span>
+<span class="n">sig</span><span class="o">.</span><span class="n">bind_partial</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">arguments</span>
+<span class="c1"># OrderedDict([('a', 2), ('b', 2)])</span>
+</pre>
+
+
+<p>The <code>bind_partial</code> method of the <code>signature</code> object map arguments to their corresponding signature, we can 
+use it together with the annotation information to create a simple function decorator that does type checking:</p>
+<pre class="code literal-block"><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="k">def</span> <span class="nf">type_check</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">annotation</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">return_type</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'return'</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">bind_partial</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">arguments</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">arguments</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">annotation</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="n">return_value</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_type</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span><span class="n">return_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">return_value</span>
+    <span class="k">return</span> <span class="n">wrapped</span>
+
+<span class="nd">@type_check</span>
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># 3</span>
+
+<span class="n">add</span><span class="p">(</span><span class="s1">'1'</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1">#Traceback (most recent call last):</span>
+<span class="c1">#  File "&lt;stdin&gt;", line 1, in &lt;module&gt;</span>
+<span class="c1">#  File "/Projects/aw/shit.py", line 37, in wrapped</span>
+<span class="c1">#    assert all(isinstance(arguments[k],v) for k,v in annotation.items())</span>
+<span class="c1">#AssertionError</span>
+</pre>
+
+
+<p>The above is the most basic type checker you can create, however this type checker involved the use of the <code>inspect</code> module 
+which the notoriously slow.</p>
+<h4>Let's timeit</h4>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">timeit</span> <span class="kn">import</span> <span class="n">timeit</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
+<span class="k">def</span> <span class="nf">type_check</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">annotation</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">return_type</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'return'</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">annotation</span><span class="p">:</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">bind_partial</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">arguments</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">arguments</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">annotation</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="n">return_value</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_type</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span><span class="n">return_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">return_value</span>
+    <span class="k">return</span> <span class="n">wrapped</span>
+
+<span class="k">def</span> <span class="nf">useless_wrapper</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapped</span>
+
+
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="n">base_add</span> <span class="o">=</span> <span class="n">useless_wrapper</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+<span class="n">tc_add</span> <span class="o">=</span> <span class="n">type_check</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+
+<span class="n">t</span><span class="o">=</span> <span class="n">timeit</span><span class="p">(</span><span class="s1">'add(1,1)'</span><span class="p">,</span>
+       <span class="n">setup</span><span class="o">=</span><span class="s1">'from __main__ import add'</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'it takes '</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="s1">' seconds to run add 100000 times'</span><span class="p">)</span>
+
+
+<span class="n">t</span><span class="o">=</span> <span class="n">timeit</span><span class="p">(</span><span class="s1">'base_add(1,1)'</span><span class="p">,</span>
+       <span class="n">setup</span><span class="o">=</span><span class="s1">'from __main__ import base_add'</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'it takes '</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="s1">' seconds to run base_add 100000 times'</span><span class="p">)</span>
+
+
+<span class="n">t</span><span class="o">=</span> <span class="n">timeit</span><span class="p">(</span><span class="s1">'tc_add(1,1)'</span><span class="p">,</span>
+       <span class="n">setup</span><span class="o">=</span><span class="s1">'from __main__ import tc_add'</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'it takes '</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="s1">' seconds to run tc_add 100000 times'</span><span class="p">)</span>
+</pre>
+
+
+<p>Result:</p>
+<pre class="code literal-block"><span></span><span class="c1">#it takes  0.013391613000000024  seconds to run add 100000 times</span>
+<span class="c1">#it takes  0.029804532999999994  seconds to run base_add 100000 times</span>
+<span class="c1">#it takes  0.708789169  seconds to run tc_add 100000 times</span>
+</pre>
+
+
+<p>Adding a function decorator add a little overhead while the type checker 
+put huge overhead onto the original function. It is due to that the <code>bind_partial</code> method
+dynamically analyses where <code>*args</code> and <code>**kwarg</code> would be mapped to the signature, in native python code, while the handling of
+<code>*args</code> and <code>**kwarg</code> of an actual function call is optimized in c, now what if we can leverage that?</p>
+<h4>The Hack</h4>
+<pre class="code literal-block"><span></span><span class="n">fn_s</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">def magic_func {0}:</span>
+<span class="s2">    {1}</span>
+<span class="s2">                """</span>
+
+<span class="k">def</span> <span class="nf">type_check_fast</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">annotation</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">return_type</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'return'</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">annotation</span><span class="p">:</span>
+        <span class="n">assert_str</span> <span class="o">=</span> <span class="s1">'assert '</span> <span class="o">+</span> <span class="s1">' and '</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">"isinstance({k},{v})"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">annotation</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">'compiling:</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="n">fn_s</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">assert_str</span><span class="p">))</span>
+        <span class="k">exec</span><span class="p">(</span><span class="n">fn_s</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span><span class="n">assert_str</span><span class="p">))</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()[</span><span class="s1">'magic_func'</span><span class="p">]</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">deced</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">annotation</span><span class="p">:</span>
+            <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">return_value</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_type</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span><span class="n">return_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">return_value</span>
+    <span class="k">return</span> <span class="n">deced</span>
+</pre>
+
+
+<p>Yes, <code>exec</code> is used here. The trick is to compile a function with signature that follows the target function's,
+and construct assert statement dynamically, so that the string</p>
+<pre class="code literal-block"><span></span><span class="n">fn_s</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">def magic_func {0}:</span>
+<span class="s2">    {1}</span>
+<span class="s2">                """</span>
+</pre>
+
+
+<p>got formatted to:</p>
+<pre class="code literal-block"><span></span><span class="c1">#def magic_func (a: int, b: int) -&gt; int:</span>
+<span class="c1">#    assert isinstance(a,int) and isinstance(b,int)</span>
+</pre>
+
+
+<p>The string is then evaluated by the <code>exec</code> statement.</p>
+<p>The new function defined in the local scope is then accessable with <code>locals()['magic_func']</code>.</p>
+<p>Let's put it all together:</p>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">timeit</span> <span class="kn">import</span> <span class="n">timeit</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="n">fn_s</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">def magic_func {0}:</span>
+<span class="s2">    {1}</span>
+<span class="s2">                """</span>
+
+<span class="k">def</span> <span class="nf">type_check_fast</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">annotation</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">return_type</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'return'</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">annotation</span><span class="p">:</span>
+        <span class="n">assert_str</span> <span class="o">=</span> <span class="s1">'assert '</span> <span class="o">+</span> <span class="s1">' and '</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">"isinstance({k},{v})"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">annotation</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">'compiling:</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="n">fn_s</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">assert_str</span><span class="p">))</span>
+        <span class="k">exec</span><span class="p">(</span><span class="n">fn_s</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span><span class="n">assert_str</span><span class="p">))</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()[</span><span class="s1">'magic_func'</span><span class="p">]</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">deced</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">annotation</span><span class="p">:</span>
+            <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">return_value</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_type</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span><span class="n">return_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">return_value</span>
+    <span class="k">return</span> <span class="n">deced</span>
+
+<span class="k">def</span> <span class="nf">type_check</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">annotation</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">return_type</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'return'</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">annotation</span> <span class="p">:</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">bind_partial</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">arguments</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">arguments</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">annotation</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="n">return_value</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_type</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span><span class="n">return_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">return_value</span>
+    <span class="k">return</span> <span class="n">wrapped</span>
+
+<span class="k">def</span> <span class="nf">useless_wrapper</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapped</span>
+
+
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="n">base_add</span> <span class="o">=</span> <span class="n">useless_wrapper</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+<span class="n">tc_add</span> <span class="o">=</span> <span class="n">type_check</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+<span class="n">fast_tc_add</span> <span class="o">=</span> <span class="n">type_check_fast</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+
+<span class="n">t</span><span class="o">=</span> <span class="n">timeit</span><span class="p">(</span><span class="s1">'add(1,1)'</span><span class="p">,</span>
+       <span class="n">setup</span><span class="o">=</span><span class="s1">'from __main__ import add'</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'it takes '</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="s1">' seconds to run add 100000 times'</span><span class="p">)</span>
+
+
+<span class="n">t</span><span class="o">=</span> <span class="n">timeit</span><span class="p">(</span><span class="s1">'base_add(1,1)'</span><span class="p">,</span>
+       <span class="n">setup</span><span class="o">=</span><span class="s1">'from __main__ import base_add'</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'it takes '</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="s1">' seconds to run base_add 100000 times'</span><span class="p">)</span>
+
+
+<span class="n">t</span><span class="o">=</span> <span class="n">timeit</span><span class="p">(</span><span class="s1">'tc_add(1,1)'</span><span class="p">,</span>
+       <span class="n">setup</span><span class="o">=</span><span class="s1">'from __main__ import tc_add'</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'it takes '</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="s1">' seconds to run tc_add 100000 times'</span><span class="p">)</span>
+
+
+<span class="n">t</span><span class="o">=</span> <span class="n">timeit</span><span class="p">(</span><span class="s1">'fast_tc_add(1,1)'</span><span class="p">,</span>
+       <span class="n">setup</span><span class="o">=</span><span class="s1">'from __main__ import fast_tc_add'</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'it takes '</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="s1">' seconds to run fast_tc_add 100000 times'</span><span class="p">)</span>
+</pre>
+
+
+<p>Result:</p>
+<pre class="code literal-block"><span></span><span class="c1">#compiling:</span>
+<span class="c1"># </span>
+<span class="c1">#def magic_func (a: int, b: int) -&gt; int:</span>
+<span class="c1">#    assert isinstance(a,int) and isinstance(b,int)</span>
+<span class="c1">#                </span>
+<span class="c1">#it takes  0.013479943000000001  seconds to run add 100000 times</span>
+<span class="c1">#it takes  0.030140912  seconds to run base_add 100000 times</span>
+<span class="c1">#it takes  0.713209548  seconds to run tc_add 100000 times</span>
+<span class="c1">#it takes  0.07377745000000002  seconds to run fast_tc_add 100000 times</span>
+</pre>
+
+
+<p>The new type checker is 10 time faster than the origional one. Given 
+that adding a "useless" decorator (invoking one extra function) adds 0.017 second of overhead, 
+we achieved 0.07 second with essentially two extra function invoked with <code>fast_tc_add</code>.</p>
+<h4>Hack 2 - auto type check</h4>
+<p>Adding a decorator to every function you have written is very, very ugly. What if we can:</p>
+<ol>
+<li>At the end of each module, access all variables declared in the local scope.</li>
+<li>For all variables belongs to the "current" module and is function type:</li>
+<li>Wrap those functions with the type_check decorator.</li>
+</ol>
+<p>Save the following as <code>tc.py</code>:</p>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="n">fn_s</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">def magic_func {0}:</span>
+<span class="s2">    {1}</span>
+<span class="s2">                """</span>
+
+<span class="k">def</span> <span class="nf">type_check_fast</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">annotation</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">return_type</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'return'</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">annotation</span><span class="p">:</span>
+        <span class="n">assert_str</span> <span class="o">=</span> <span class="s1">'assert '</span> <span class="o">+</span> <span class="s1">' and '</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">"isinstance({k},{v})"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">annotation</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+        <span class="k">exec</span><span class="p">(</span><span class="n">fn_s</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span><span class="n">assert_str</span><span class="p">))</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()[</span><span class="s1">'magic_func'</span><span class="p">]</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">deced</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">annotation</span><span class="p">:</span>
+            <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">return_value</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_type</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span><span class="n">return_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">return_value</span>
+    <span class="k">return</span> <span class="n">deced</span>
+
+<span class="k">def</span> <span class="nf">auto_dec</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">dic_locals</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">dic_locals</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="s1">'__module__'</span><span class="p">)</span> <span class="ow">and</span> <span class="n">v</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="n">name</span> <span class="ow">and</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="n">dic_locals</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_check_fast</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</pre>
+
+
+<p>Then, in another <code>.py</code> file, put <code>auto_dec(__name__,locals())</code> after all function are decleared:</p>
+<pre class="code literal-block"><span></span><span class="kn">from</span> <span class="nn">tc</span> <span class="kn">import</span> <span class="n">auto_dec</span>
+
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span><span class="n">b</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span>
+
+<span class="k">def</span> <span class="nf">otherfunc</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span><span class="n">b</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span>
+
+<span class="k">def</span> <span class="nf">otherotherfunc</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span><span class="n">b</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span>
+
+<span class="n">auto_dec</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span><span class="nb">locals</span><span class="p">())</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span> <span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">otherfunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">otherotherfunc</span><span class="p">(</span><span class="s1">'nah'</span><span class="p">,</span><span class="s1">'got string'</span><span class="p">))</span>
+</pre>
+
+
+<p>Result:</p>
+<pre class="code literal-block"><span></span><span class="mi">3</span>
+<span class="mi">3</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+
+  <span class="n">File</span> <span class="s2">"/Projects/aw/test.py"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">17</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">otherotherfunc</span><span class="p">(</span><span class="s1">'nah'</span><span class="p">,</span><span class="s1">'got string'</span><span class="p">))</span>
+  <span class="n">File</span> <span class="s2">"/Projects/aw/tc.py"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">20</span><span class="p">,</span> <span class="ow">in</span> <span class="n">deced</span>
+    <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  <span class="n">File</span> <span class="s2">"&lt;string&gt;"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">3</span><span class="p">,</span> <span class="ow">in</span> <span class="n">magic_func</span>
+<span class="ne">AssertionError</span>
+</pre>
+
+
+<p>Source code of this post can be found <a href="https://github.com/fpim/type_checker">here</a>.</p>
+</div>
+    </div>
+    <aside class="postpromonav"><nav></nav></aside><section class="comments"><h2>
+<i class="mdi-communication-forum"></i>Comments</h2>
+        <hr>
+<div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="from-python-import-me",
+            disqus_url="https://fpim.github.io/posts/easy-and-effective-python-type-checker/",
+        disqus_title="Easy (and effective) python type checker",
+        disqus_identifier="cache/posts/easy-and-effective-python-type-checker.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="from-python-import-me";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+            </div>
+        </div>
+        <button class="btn btn-fab btn-raised btn-material-green btn-footer" data-toggle="modal" data-target="#footer-dialog">
+            <i class="mdi-communication-message"></i>
+        </button>
+        <div id="footer-dialog" class="modal fade" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">from python import me credits</h4>
+              </div>
+              <div class="modal-body">
+                    Contents © 2019         <a href="mailto:frompythonimportme@gmail.com">fyim</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+                    
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal">Ok</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="source-button">
+    <a class="btn btn-fab btn-raised btn-material-indigo" target="_blank" href="index.md" title="Source">
+        <i class="mdi-file-cloud-download"></i>
+    </a>
+
+        </div>
+</div>
+
+
+            <script src="../../assets/js/all-nocdn.js"></script><script>
+
+            $(document).ready(function() {
+                // This command is used to initialize some elements and make them work properly
+                $.material.init();
+            });
+
+            $(window).on("resize", function() {
+                if($(window).width() > 767) {
+                  $("html, body").height($(window).height());
+                  $(".main, .menu").height($(window).height() - $(".header-panel").outerHeight() - 76 );
+                  $(".posts-material").height($(window).height());
+                } else {
+                  $("html, body").css('height', '');
+                  $(".main, .menu").css('height', '');
+                  $(".posts-material").css('height', '');
+                }
+            }).trigger("resize");
+
+            function menuToggle() {
+                $("nav.menu, ul").toggleClass('responsive', '');
+            }
+        </script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

@@ -331,7 +331,7 @@ Result:
 #it takes  0.07377745000000002  seconds to run fast_tc_add 100000 times
 ```
 
-The new type checker is 10 time faster than the origional one. Given 
+The new type checker is 100 times faster than the origional one. Given 
 that adding a "useless" decorator (invoking one extra function) adds 0.017 second of overhead, 
 we achieved 0.07 second with essentially two extra function invoked with `fast_tc_add`.
 

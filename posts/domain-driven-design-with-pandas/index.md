@@ -7,7 +7,7 @@
 .. link: 
 .. description: 
 .. type: text
--- status: draft
+-- status: private
 -->
 
 Hi guys. Today I would like talk about implementing Domain-Driven Design (DDD)

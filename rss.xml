@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>from python import me</title><link>https://fpim.github.io/</link><description>python tricks and tips</description><atom:link href="https://fpim.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:frompythonimportme@gmail.com"&gt;fyim&lt;/a&gt; </copyright><lastBuildDate>Mon, 02 Sep 2019 05:18:08 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Easy (and effective) python type checker</title><link>https://fpim.github.io/posts/easy-and-effective-python-type-checker/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;h2&gt;The Problem&lt;/h2&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>from python import me</title><link>https://fpim.github.io/</link><description>python tricks and tips</description><atom:link href="https://fpim.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:frompythonimportme@gmail.com"&gt;fyim&lt;/a&gt; </copyright><lastBuildDate>Fri, 06 Sep 2019 10:01:44 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Domain-Driven Design architecture with Pandas</title><link>https://fpim.github.io/posts/domain-driven-design-with-pandas/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;p&gt;Hi guys. Today I would like talk about implementing Domain-Driven Design (DDD)
+to build a Business Intelligence system with Python and Pandas. There are many 
+articles talking about DDD already but 
+this article aims to show you an example of what you can do with it.&lt;/p&gt;
+&lt;h3&gt;My Background&lt;/h3&gt;
+&lt;p&gt;I work in finance where I need to handle data with complex relationship on a daily basis.
+The raw data that I received is usually too "raw" such that extracting any useful information from it
+often requires a lot of steps. Codes became impossible to maintain and a lot of codes
+are duplicated because of the mismatch of raw data structure and the business logic.&lt;/p&gt;
+&lt;h5&gt;The solution&lt;/h5&gt;
+&lt;p&gt;Soon I realized that I needed a DDD layer on top of the raw data to handle all the complexity for me. 
+The reason I use the term &lt;strong&gt;DDD layer&lt;/strong&gt; here is that DDD is essentially an abstraction layer of a system. 
+&lt;strong&gt;It allows you to focus on business logic only, instead of having to worry about how to implement business from raw data.&lt;/strong&gt;
+Really, architecture is all about reducing your cognitive burden when you try to edit a codebase.&lt;/p&gt;
+&lt;p&gt;Now I will demonstrate a simple design and slowly build on top of that as the codebase grow.&lt;/p&gt;
+&lt;h2&gt;faesfase&lt;/h2&gt;&lt;/div&gt;</description><guid>https://fpim.github.io/posts/domain-driven-design-with-pandas/</guid><pubDate>Fri, 06 Sep 2019 07:29:14 GMT</pubDate></item><item><title>Easy (and effective) python type checker</title><link>https://fpim.github.io/posts/easy-and-effective-python-type-checker/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;h2&gt;The Problem&lt;/h2&gt;
 &lt;p&gt;Types have been implicitly handled by python. Flexible as it may seem, developers often find it causing confusions 
 when managing a large project, especially for those coming from a strongly typed language.&lt;/p&gt;
 &lt;h3&gt;Annotation&lt;/h3&gt;

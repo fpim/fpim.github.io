@@ -15,7 +15,7 @@
  </url>
  <url>
   <loc>https://fpim.github.io/archive.html</loc>
-  <lastmod>2019-09-02T05:10:00Z</lastmod>
+  <lastmod>2019-09-06T10:01:00Z</lastmod>
  </url>
  <url>
   <loc>https://fpim.github.io/categories/</loc>
@@ -92,6 +92,10 @@
  <url>
   <loc>https://fpim.github.io/pages/theming/</loc>
   <lastmod>2019-09-02T05:10:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://fpim.github.io/posts/domain-driven-design-with-pandas/</loc>
+  <lastmod>2019-09-06T10:01:00Z</lastmod>
  </url>
  <url>
   <loc>https://fpim.github.io/posts/easy-and-effective-python-type-checker/</loc>

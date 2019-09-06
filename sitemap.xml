@@ -7,15 +7,15 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://fpim.github.io/</loc>
-  <lastmod>2019-09-06T12:34:00Z</lastmod>
+  <lastmod>2019-09-06T12:42:00Z</lastmod>
  </url>
  <url>
   <loc>https://fpim.github.io/2019/</loc>
-  <lastmod>2019-09-06T12:34:00Z</lastmod>
+  <lastmod>2019-09-06T12:42:00Z</lastmod>
  </url>
  <url>
   <loc>https://fpim.github.io/archive.html</loc>
-  <lastmod>2019-09-06T12:34:00Z</lastmod>
+  <lastmod>2019-09-06T12:42:00Z</lastmod>
  </url>
  <url>
   <loc>https://fpim.github.io/categories/</loc>
@@ -27,7 +27,7 @@
  </url>
  <url>
   <loc>https://fpim.github.io/galleries/demo/</loc>
-  <lastmod>2019-09-06T12:35:00Z</lastmod>
+  <lastmod>2019-09-06T12:40:00Z</lastmod>
  </url>
  <url>
   <loc>https://fpim.github.io/listings/</loc>
@@ -95,6 +95,6 @@
  </url>
  <url>
   <loc>https://fpim.github.io/posts/easy-and-effective-python-type-checker/</loc>
-  <lastmod>2019-09-06T12:34:00Z</lastmod>
+  <lastmod>2019-09-06T12:42:00Z</lastmod>
  </url>
 </urlset>

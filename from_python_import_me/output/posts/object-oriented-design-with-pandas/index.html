@@ -1,30 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Object-Oriented Design architecture with Pandas | from python import me</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://fpim.github.io/posts/object-oriented-design-with-pandas/">
+<!--[if lt IE 9]>
+            <script src="../../assets/js/html5shiv.min.js"></script>
+            <script src="../../assets/js/respond.min.js"></script>
+        <![endif]--><meta name="author" content="fyim">
+<link rel="prev" href="../easy-and-effective-python-type-checker/" title="Easy (and effective) python type checker" type="text/html">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-default header-panel shadow-z-3" role="navigation"><div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-3">
+            <h1 class="title-blog">
+                <a href="https://fpim.github.io/">
+                        <span id="blog-title">from python import me</span>
+                    </a>
+            </h1>
+          </div>
+          <div class="col-xs-9">
+            <a id="hamburger" class="btn btn-raised" href="javascript:void(0);" onclick="menuToggle();">☰</a>
+          </div>
+        </div>
+      </div>
+<!-- /.container-fluid -->
+</nav><div class="container-fluid main" id="content" role="main">
+        <div class="row">
+            <nav class="col-xs-12 col-sm-3 menu"><ul>
+<li class="withripple"><a href="../../archive.html">Archive</a></li>
+                <li class="withripple"><a href="../../categories/">Tags</a></li>
+                <li class="withripple"><a href="../../rss.xml">RSS feed</a></li>
+
+                    
+                </ul>
+<ul></ul></nav><div class="posts-material col-xs-12 col-sm-9">
+                <div class="col-xs-12 col-md-11 content-material">
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Object-Oriented Design architecture with Pandas</a></h1>
+<hr>
+<div class="metadata">
+            <span class="byline author vcard">
+                <a href=".">
+                        <i class="mdi-action-face-unlock"></i>
+                    fyim
+                </a>
+            </span>
+            <span class="dateline">
+                <a href="." rel="bookmark"><i class="mdi-device-access-time"></i>
+                    <time class="published dt-published" datetime="2019-09-06T15:29:14+08:00" itemprop="datePublished" title="2019-09-06 15:29">2019-09-06 15:29</time></a>
+            </span>
+                <span class="commentline">            <a href="#disqus_thread" data-disqus-identifier="cache/posts/domain-driven-design-with-pandas.html">Comments</a>
+
+</span>
+        </div>
+        
+        <hr></header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
 <p>Hi guys. Today I would like to talk about implementing Object-oriented (OO) Design to build a Business Intelligence module with Python and Pandas. </p>
 <p>Pandas is widely used for data analytics, it is easy to use, one can easily build a script of hundreds of lines of codes
 using pandas to handle complex data. However, having worked with many data analysts, I found that most of the scripts produced by data analysts should fall into the category of "procedural code", which is not reusable.
 Changing the context a bit would often result in a complete re-write of the code. It is fine if you are in the "research" area where your code
 are used for "exploration" or "experimental" purposes, but if you are to write code that contributes
 to a larger system or code that will be run repeatedly, you need to implement some architecture.</p>
-<h2>My Background</h2>
+<h3>My Background</h3>
 <p>I work in finance where I need to handle data with complex relationship daily.
 The raw data that I received is usually too "raw" such that extracting any useful information from it often requires a lot of steps. Code could easily become impossible to maintain due to the mismatch of raw data structure and business logic.</p>
-<h4>The solution</h4>
+<h5>The solution</h5>
 <p>Soon I realized that I needed a OO layer on top of the raw data to handle all the complexity. 
 The reason I use the term <strong>OO layer</strong> here is that OO is essentially an abstraction layer. 
 <strong>It allows you to focus on business logic only, instead of having to worry about how to implement business from raw data.</strong>
 Architecture is all about reducing your cognitive burden when you try to edit a codebase.</p>
-<h1>The Data</h1>
+<h2>The Data</h2>
 <p>We will try to build a OO model for some trade data:</p>
 <table>
-<thead>
-<tr>
+<thead><tr>
 <th>Account,</th>
 <th>Stock_Code,</th>
 <th>BuySell,</th>
 <th>Date,</th>
 <th>Quantity,</th>
 <th>Unit_Price</th>
-</tr>
-</thead>
+</tr></thead>
 <tbody>
 <tr>
 <td>1001</td>
@@ -124,15 +188,13 @@ Architecture is all about reducing your cognitive burden when you try to edit a 
 </tr>
 </tbody>
 </table>
-<p><br/><br/>
+<p><br><br>
 some account information:</p>
 <table>
-<thead>
-<tr>
+<thead><tr>
 <th>Account,</th>
 <th>Name</th>
-</tr>
-</thead>
+</tr></thead>
 <tbody>
 <tr>
 <td>1001</td>
@@ -144,16 +206,14 @@ some account information:</p>
 </tr>
 </tbody>
 </table>
-<p><br/><br/>
+<p><br><br>
 and some closing price data:</p>
 <table>
-<thead>
-<tr>
+<thead><tr>
 <th>Stock_Code,</th>
 <th>Closing_Price,</th>
 <th>Data</th>
-</tr>
-</thead>
+</tr></thead>
 <tbody>
 <tr>
 <td>001</td>
@@ -213,7 +273,7 @@ mock it up:</p>
         <span class="c1"># This method should handle the import of source data</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
 
-        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">        Account|Stock_Code|BuySell|Date|Quantity|Unit_Price</span>
 <span class="s2">        1001|001|B|20190105|8|2</span>
 <span class="s2">        1001|002|B|20190105|4|3</span>
@@ -227,37 +287,37 @@ mock it up:</p>
 <span class="s2">        1002|003|B|20190106|5|5</span>
 <span class="s2">        1002|003|S|20190106|4|6</span>
 <span class="s2">        1002|001|S|20190107|6|3</span>
-<span class="s2">        &quot;&quot;&quot;</span>
+<span class="s2">        """</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span><span class="s1">''</span><span class="p">))</span>
         <span class="n">data</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;|&#39;</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Account&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span>
-                                                <span class="s1">&#39;Date&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span>
-                                                <span class="s1">&#39;Stock_Code&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span>
-                                                <span class="s2">&quot;Date&quot;</span><span class="p">:</span><span class="nb">str</span><span class="p">})</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">Date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Date</span><span class="p">,</span><span class="n">format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">'|'</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">'Account'</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span>
+                                                <span class="s1">'Date'</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span>
+                                                <span class="s1">'Stock_Code'</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span>
+                                                <span class="s2">"Date"</span><span class="p">:</span><span class="nb">str</span><span class="p">})</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">Date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Date</span><span class="p">,</span><span class="n">format</span><span class="o">=</span><span class="s1">'%Y%m</span><span class="si">%d</span><span class="s1">'</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
     <span class="k">def</span> <span class="nf">account_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
 
-        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">        Account|Name</span>
 <span class="s2">        1001|David</span>
 <span class="s2">        1002|Tom</span>
-<span class="s2">        &quot;&quot;&quot;</span>
+<span class="s2">        """</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span><span class="s1">''</span><span class="p">))</span>
         <span class="n">data</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Account&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                                                  <span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">'|'</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">'Account'</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                                  <span class="s1">'Name'</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
         <span class="k">return</span> <span class="n">df</span>
 
     <span class="k">def</span> <span class="nf">stock_prices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
 
-        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">        Stock_Code|Closing_Price|Date</span>
 <span class="s2">        001|2|20190105</span>
 <span class="s2">        001|3|20190106</span>
@@ -268,13 +328,13 @@ mock it up:</p>
 <span class="s2">        003|5|20190105</span>
 <span class="s2">        003|6|20190106</span>
 <span class="s2">        003|7|20190107</span>
-<span class="s2">        &quot;&quot;&quot;</span>
+<span class="s2">        """</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span><span class="s1">''</span><span class="p">))</span>
         <span class="n">data</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Stock_Code&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                                                  <span class="s1">&#39;Date&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">Date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Date</span><span class="p">,</span><span class="n">format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">'|'</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">'Stock_Code'</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                                  <span class="s1">'Date'</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">Date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Date</span><span class="p">,</span><span class="n">format</span><span class="o">=</span><span class="s1">'%Y%m</span><span class="si">%d</span><span class="s1">'</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 </pre>
 
@@ -287,9 +347,9 @@ mock it up:</p>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">trade_book_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;_trade_book_df&#39;</span><span class="p">):</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">trade_df</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">account_df</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Account&#39;</span><span class="p">),</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Account&#39;</span><span class="p">)</span>
-            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Trade_Amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Quantity</span> <span class="o">*</span> <span class="n">df</span><span class="o">.</span><span class="n">Unit_Price</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">'_trade_book_df'</span><span class="p">):</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">trade_df</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">account_df</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'Account'</span><span class="p">),</span><span class="n">on</span><span class="o">=</span><span class="s1">'Account'</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">'Trade_Amount'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Quantity</span> <span class="o">*</span> <span class="n">df</span><span class="o">.</span><span class="n">Unit_Price</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_trade_book_df</span> <span class="o">=</span> <span class="n">df</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trade_book_df</span>
 
@@ -336,7 +396,7 @@ mock it up:</p>
 <li>The <code>stock_prices</code> method extracts stock prices of a specific date.</li>
 <li>It provides the gateways to the <code>Holdings</code> and <code>Accounts</code> context which we are going to talk about.</li>
 </ol>
-<h2>Contexts</h2>
+<h3>Contexts</h3>
 <p>"Context" is the dimension you want to view the data, all the views with the same dimension should be encapsulated 
 in one object.</p>
 <p>For example, to view the data in the "Holding" context, we need to:
@@ -349,12 +409,12 @@ in one object.</p>
     <span class="k">def</span> <span class="nf">holdings_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">date</span><span class="p">):</span>
         <span class="n">trades_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_book</span><span class="o">.</span><span class="n">trade_book_df</span>
         <span class="n">date_hld_df</span> <span class="o">=</span> <span class="n">trades_df</span><span class="p">[</span><span class="n">trades_df</span><span class="o">.</span><span class="n">Date</span> <span class="o">&lt;=</span> <span class="n">date</span><span class="p">]</span>
-        <span class="n">date_hld_df</span><span class="p">[</span><span class="s1">&#39;qnt_change&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_hld_df</span><span class="p">[</span><span class="s1">&#39;BuySell&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="s1">&#39;B&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;S&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">})</span> <span class="o">*</span> <span class="n">date_hld_df</span><span class="o">.</span><span class="n">Quantity</span>
-        <span class="n">hld_df</span> <span class="o">=</span> <span class="n">date_hld_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;Account&#39;</span><span class="p">,</span><span class="s1">&#39;Stock_Code&#39;</span><span class="p">],</span><span class="n">as_index</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>\
-            <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;qnt_change&#39;</span><span class="p">:</span><span class="nb">sum</span><span class="p">})</span>\
-            <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;qnt_change&#39;</span><span class="p">:</span><span class="s1">&#39;Holdings&#39;</span><span class="p">})</span>
-        <span class="n">hld_df</span> <span class="o">=</span> <span class="n">hld_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_book</span><span class="o">.</span><span class="n">stock_prices</span><span class="p">(</span><span class="n">date</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Stock_Code&#39;</span><span class="p">),</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Stock_Code&#39;</span><span class="p">)</span>
-        <span class="n">hld_df</span><span class="p">[</span><span class="s1">&#39;Market_Value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hld_df</span><span class="o">.</span><span class="n">Closing_Price</span> <span class="o">*</span> <span class="n">hld_df</span><span class="o">.</span><span class="n">Holdings</span>
+        <span class="n">date_hld_df</span><span class="p">[</span><span class="s1">'qnt_change'</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_hld_df</span><span class="p">[</span><span class="s1">'BuySell'</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="s1">'B'</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">'S'</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">})</span> <span class="o">*</span> <span class="n">date_hld_df</span><span class="o">.</span><span class="n">Quantity</span>
+        <span class="n">hld_df</span> <span class="o">=</span> <span class="n">date_hld_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'Account'</span><span class="p">,</span><span class="s1">'Stock_Code'</span><span class="p">],</span><span class="n">as_index</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">'qnt_change'</span><span class="p">:</span><span class="nb">sum</span><span class="p">})</span>\
+            <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'qnt_change'</span><span class="p">:</span><span class="s1">'Holdings'</span><span class="p">})</span>
+        <span class="n">hld_df</span> <span class="o">=</span> <span class="n">hld_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_book</span><span class="o">.</span><span class="n">stock_prices</span><span class="p">(</span><span class="n">date</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'Stock_Code'</span><span class="p">),</span><span class="n">on</span><span class="o">=</span><span class="s1">'Stock_Code'</span><span class="p">)</span>
+        <span class="n">hld_df</span><span class="p">[</span><span class="s1">'Market_Value'</span><span class="p">]</span> <span class="o">=</span> <span class="n">hld_df</span><span class="o">.</span><span class="n">Closing_Price</span> <span class="o">*</span> <span class="n">hld_df</span><span class="o">.</span><span class="n">Holdings</span>
         <span class="k">return</span> <span class="n">hld_df</span>
 
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
@@ -379,8 +439,8 @@ in one object.</p>
 
     <span class="k">def</span> <span class="nf">account_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">date</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_holdings</span><span class="o">.</span><span class="n">holdings_of</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Account&#39;</span><span class="p">,</span><span class="n">as_index</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;Market_Value&#39;</span><span class="p">:</span><span class="nb">sum</span><span class="p">,</span>
-                                                         <span class="s1">&#39;Date&#39;</span><span class="p">:</span><span class="s1">&#39;first&#39;</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'Account'</span><span class="p">,</span><span class="n">as_index</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">'Market_Value'</span><span class="p">:</span><span class="nb">sum</span><span class="p">,</span>
+                                                         <span class="s1">'Date'</span><span class="p">:</span><span class="s1">'first'</span><span class="p">})</span>
 
 <span class="n">Book</span><span class="p">()</span><span class="o">.</span><span class="n">accounts</span><span class="o">.</span><span class="n">account_value</span><span class="p">(</span><span class="n">date</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
 
@@ -391,10 +451,105 @@ in one object.</p>
 </pre>
 
 
-<h1>Summary</h1>
+<h2>Summary</h2>
 <p>The above is a simple example of how OO Design can be applied to your pandas script. The architecture allows you to 
 scale up easily as the number of data source increase. This has been just a very brief introduction, there are many more 
 modeling techniques you can use to manage complex data. Finally, I want to stress that these techniques are becoming more and more important. 
 Traditionally, this kind of problem can be handled by the database and relational model, but given the growing complexity and scatteredness of the data, you are
 more likely to encounter situations where your database cannot handle everything and you will need some supplement from your code,
 especially when you need data from multiple data source.</p>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager">
+<li class="previous">
+                <a href="../easy-and-effective-python-type-checker/" rel="prev" title="Easy (and effective) python type checker">Previous post</a>
+            </li>
+        </ul></nav></aside><section class="comments"><h2>
+<i class="mdi-communication-forum"></i>Comments</h2>
+        <hr>
+<div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="from-python-import-me",
+            disqus_url="https://fpim.github.io/posts/object-oriented-design-with-pandas/",
+        disqus_title="Object-Oriented Design architecture with Pandas",
+        disqus_identifier="cache/posts/domain-driven-design-with-pandas.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="from-python-import-me";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+            </div>
+        </div>
+        <button class="btn btn-fab btn-raised btn-material-green btn-footer" data-toggle="modal" data-target="#footer-dialog">
+            <i class="mdi-communication-message"></i>
+        </button>
+        <div id="footer-dialog" class="modal fade" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">from python import me credits</h4>
+              </div>
+              <div class="modal-body">
+                    Contents © 2019         <a href="mailto:frompythonimportme@gmail.com">fyim</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+                    
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal">Ok</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="source-button">
+    <a class="btn btn-fab btn-raised btn-material-indigo" target="_blank" href="index.md" title="Source">
+        <i class="mdi-file-cloud-download"></i>
+    </a>
+
+        </div>
+</div>
+
+
+            <script src="../../assets/js/all-nocdn.js"></script><script>
+
+            $(document).ready(function() {
+                // This command is used to initialize some elements and make them work properly
+                $.material.init();
+            });
+
+            $(window).on("resize", function() {
+                if($(window).width() > 767) {
+                  $("html, body").height($(window).height());
+                  $(".main, .menu").height($(window).height() - $(".header-panel").outerHeight() - 76 );
+                  $(".posts-material").height($(window).height());
+                } else {
+                  $("html, body").css('height', '');
+                  $(".main, .menu").css('height', '');
+                  $(".posts-material").css('height', '');
+                }
+            }).trigger("resize");
+
+            function menuToggle() {
+                $("nav.menu, ul").toggleClass('responsive', '');
+            }
+        </script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

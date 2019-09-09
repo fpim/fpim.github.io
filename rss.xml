@@ -1,5 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>from python import me</title><link>https://fpim.github.io/</link><description>python tricks and tips</description><atom:link href="https://fpim.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:frompythonimportme@gmail.com"&gt;fyim&lt;/a&gt; </copyright><lastBuildDate>Sun, 08 Sep 2019 09:28:24 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Object-Oriented Design architecture with Pandas</title><link>https://fpim.github.io/posts/object-oriented-design-with-pandas/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;p&gt;Hi guys. Today I would like to talk about implementing Object-oriented (OO) Design to build a Business Intelligence module with Python and Pandas. &lt;/p&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>from python import me</title><link>https://fpim.github.io/</link><description>python tricks and tips</description><atom:link href="https://fpim.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:frompythonimportme@gmail.com"&gt;fyim&lt;/a&gt; </copyright><lastBuildDate>Mon, 09 Sep 2019 08:06:21 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Setting up python's Windows embeddable distribution (properly)</title><link>https://fpim.github.io/posts/setting-up-python-windows-embeddable-environment-properly/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;h2&gt;Embeddable distribution&lt;/h2&gt;
+&lt;p&gt;If there is anything I like about Windows as a pythonist, it must be that 
+you can use &lt;a href="https://docs.python.org/3/using/windows.html#windows-embeddable"&gt;embedded distribution&lt;/a&gt; of python.  &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The embedded distribution is a ZIP file containing a minimal Python environment. 
+It is intended for acting as part of another application, rather than being directly 
+accessed by end-users.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In my opinion, it is a portable, ready-to-ship virtualenv. However, the 
+embedded distribution comes with some limitation:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Third-party packages should be installed by the application installer alongside 
+the embedded distribution. Using pip to manage dependencies as for a regular Python 
+installation is not supported with this distribution, though with some care it may be 
+possible to include and use pip for automatic updates. In general, third-party packages 
+should be treated as part of the application (“vendoring”) so that the developer can 
+ensure compatibility with newer versions before providing updates to users.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Sounds scary right? It said it doesn't even support pip. Don't worry, follow
+these simple steps, you will have a fully workable embedded environment.&lt;/p&gt;
+&lt;h3&gt;Get the distribution&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Go to &lt;a href="https://www.python.org/downloads/windows/"&gt;https://www.python.org/downloads/windows/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Choose the version python you like and download the corresponding &lt;code&gt;Windows x86-64 embeddable zip file&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Unzip the file. &lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;To make this tutorial easy to follow, I am assuming that you have downloaded &lt;code&gt;Python3.7&lt;/code&gt; and unzipped it to
+&lt;code&gt;C:\python\&lt;/code&gt;.&lt;/p&gt;
+&lt;h3&gt;Get pip&lt;/h3&gt;
+&lt;p&gt;The distribution does not have pip installed in place, you need to install it yourself:
+1. Download &lt;code&gt;get-pip.py&lt;/code&gt; at &lt;a href="https://bootstrap.pypa.io/get-pip.py"&gt;https://bootstrap.pypa.io/get-pip.py&lt;/a&gt;
+2. Save it to &lt;code&gt;c:\python\get-pip.py&lt;/code&gt;
+3. In command-line run &lt;code&gt;C:\python\python get-pip.py&lt;/code&gt;
+4. pip is now installed&lt;/p&gt;
+&lt;h3&gt;Config path&lt;/h3&gt;
+&lt;p&gt;The runtime of this distribution doesn't have an empty string &lt;code&gt;''&lt;/code&gt; added in &lt;code&gt;sys.path&lt;/code&gt;,
+so that the &lt;code&gt;current directory&lt;/code&gt; is not added into &lt;code&gt;sys.path&lt;/code&gt;, to solve the problem,
+you need to:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open &lt;code&gt;C:\python\python37._pth&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Uncomment the line &lt;code&gt;#import site&lt;/code&gt; and save.&lt;/li&gt;
+&lt;li&gt;Create the following python file at &lt;code&gt;c:\python\sitecustomize.py&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+&lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;h3&gt;lib2to3 issue&lt;/h3&gt;
+&lt;p&gt;You will encounter the following error when you install some packages:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;error&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Errno&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Error&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'lib2to3&lt;/span&gt;&lt;span class="se"&gt;\\&lt;/span&gt;&lt;span class="s1"&gt;Grammar3.6.5.final.0.pickle'&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;ol&gt;
+&lt;li&gt;Unzip &lt;code&gt;C:\python\python37.zip&lt;/code&gt; to a &lt;code&gt;new folder&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Delete &lt;code&gt;C:\python\python37.zip&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Rename the &lt;code&gt;new folder&lt;/code&gt; to &lt;code&gt;python37.zip&lt;/code&gt; &lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Python's import module is able to treat zip file as folder however, it cannot
+read pickle file inside a zip file, so unzip it and rename it.&lt;/p&gt;
+&lt;h3&gt;Running pip&lt;/h3&gt;
+&lt;p&gt;If you don't want to mess with you PATH, you can simply do the following in your window command prompt:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;CD C:\python\Scripts&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;C:\python\python pip install xxxxx&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;Running Scripts&lt;/h3&gt;
+&lt;p&gt;Again if you don't want to mess with you PATH, you can simply do in your window command prompt:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;C:\python\python &amp;lt;path to your script&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/div&gt;</description><guid>https://fpim.github.io/posts/setting-up-python-windows-embeddable-environment-properly/</guid><pubDate>Mon, 09 Sep 2019 06:48:18 GMT</pubDate></item><item><title>Object-Oriented Design architecture with Pandas</title><link>https://fpim.github.io/posts/object-oriented-design-with-pandas/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;p&gt;Hi guys. Today I would like to talk about implementing Object-oriented (OO) Design to build a Business Intelligence module with Python and Pandas. &lt;/p&gt;
 &lt;p&gt;Pandas is widely used for data analytics, it is easy to use, one can easily build a script of hundreds of lines of codes
 using pandas to handle complex data. However, having worked with many data analysts, I found that most of the scripts produced by data analysts should fall into the category of "procedural code", which is not reusable.
 Changing the context a bit would often result in a complete re-write of the code. It is fine if you are in the "research" area where your code

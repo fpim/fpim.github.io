@@ -11,7 +11,7 @@
 <!--[if lt IE 9]>
             <script src="assets/js/html5shiv.min.js"></script>
             <script src="assets/js/respond.min.js"></script>
-        <![endif]--><link rel="prefetch" href="posts/object-oriented-design-with-pandas/" type="text/html">
+        <![endif]--><link rel="prefetch" href="posts/setting-up-python-windows-embeddable-environment-properly/" type="text/html">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -47,7 +47,98 @@
 
     <div class="postindex well post-material ">
     
-        <article class="h-entry post-text"><header><h1 class="p-name entry-title header"><a href="posts/object-oriented-design-with-pandas/" class="u-url">Object-Oriented Design architecture with Pandas</a></h1>
+        <article class="h-entry post-text"><header><h1 class="p-name entry-title header"><a href="posts/setting-up-python-windows-embeddable-environment-properly/" class="u-url">Setting up python's Windows embeddable distribution (properly)</a></h1>
+            <div class="metadata">
+                <span class="byline author vcard">
+                        <i class="mdi-action-face-unlock"></i>
+                    fyim
+                </span>
+                <span class="dateline"><a href="posts/setting-up-python-windows-embeddable-environment-properly/" rel="bookmark">
+                    <i class="mdi-device-access-time"></i><time class="published dt-published" datetime="2019-09-09T14:48:18+08:00" title="2019-09-09 14:48">2019-09-09 14:48</time></a></span>
+                    <span class="commentline">            <a href="posts/setting-up-python-windows-embeddable-environment-properly/#disqus_thread" data-disqus-identifier="cache/posts/setting-up-python-windows-embeddable-environment-properly.html">Comments</a>
+
+</span>
+            </div>
+            <hr></header><div class="e-content entry-content">
+        <div>
+<h2>Embeddable distribution</h2>
+<p>If there is anything I like about Windows as a pythonist, it must be that 
+you can use <a href="https://docs.python.org/3/using/windows.html#windows-embeddable">embedded distribution</a> of python.  </p>
+<blockquote>
+<p>The embedded distribution is a ZIP file containing a minimal Python environment. 
+It is intended for acting as part of another application, rather than being directly 
+accessed by end-users.</p>
+</blockquote>
+<p>In my opinion, it is a portable, ready-to-ship virtualenv. However, the 
+embedded distribution comes with some limitation:</p>
+<blockquote>
+<p>Third-party packages should be installed by the application installer alongside 
+the embedded distribution. Using pip to manage dependencies as for a regular Python 
+installation is not supported with this distribution, though with some care it may be 
+possible to include and use pip for automatic updates. In general, third-party packages 
+should be treated as part of the application (“vendoring”) so that the developer can 
+ensure compatibility with newer versions before providing updates to users.</p>
+</blockquote>
+<p>Sounds scary right? It said it doesn't even support pip. Don't worry, follow
+these simple steps, you will have a fully workable embedded environment.</p>
+<h3>Get the distribution</h3>
+<ol>
+<li>Go to <a href="https://www.python.org/downloads/windows/">https://www.python.org/downloads/windows/</a>
+</li>
+<li>Choose the version python you like and download the corresponding <code>Windows x86-64 embeddable zip file</code>.</li>
+<li>Unzip the file. </li>
+</ol>
+<p>To make this tutorial easy to follow, I am assuming that you have downloaded <code>Python3.7</code> and unzipped it to
+<code>C:\python\</code>.</p>
+<h3>Get pip</h3>
+<p>The distribution does not have pip installed in place, you need to install it yourself:
+1. Download <code>get-pip.py</code> at <a href="https://bootstrap.pypa.io/get-pip.py">https://bootstrap.pypa.io/get-pip.py</a>
+2. Save it to <code>c:\python\get-pip.py</code>
+3. In command-line run <code>C:\python\python get-pip.py</code>
+4. pip is now installed</p>
+<h3>Config path</h3>
+<p>The runtime of this distribution doesn't have an empty string <code>''</code> added in <code>sys.path</code>,
+so that the <code>current directory</code> is not added into <code>sys.path</code>, to solve the problem,
+you need to:</p>
+<ol>
+<li>Open <code>C:\python\python37._pth</code>.</li>
+<li>Uncomment the line <code>#import site</code> and save.</li>
+<li>Create the following python file at <code>c:\python\sitecustomize.py</code>:</li>
+</ol>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>
+</pre>
+
+
+<h3>lib2to3 issue</h3>
+<p>You will encounter the following error when you install some packages:</p>
+<pre class="code literal-block"><span></span><span class="n">error</span><span class="p">:</span> <span class="p">[</span><span class="n">Errno</span> <span class="mi">0</span><span class="p">]</span> <span class="n">Error</span><span class="p">:</span> <span class="s1">'lib2to3</span><span class="se">\\</span><span class="s1">Grammar3.6.5.final.0.pickle'</span>
+</pre>
+
+
+<ol>
+<li>Unzip <code>C:\python\python37.zip</code> to a <code>new folder</code>
+</li>
+<li>Delete <code>C:\python\python37.zip</code>
+</li>
+<li>Rename the <code>new folder</code> to <code>python37.zip</code> </li>
+</ol>
+<p>Python's import module is able to treat zip file as folder however, it cannot
+read pickle file inside a zip file, so unzip it and rename it.</p>
+<h3>Running pip</h3>
+<p>If you don't want to mess with you PATH, you can simply do the following in your window command prompt:</p>
+<ol>
+<li><code>CD C:\python\Scripts</code></li>
+<li><code>C:\python\python pip install xxxxx</code></li>
+</ol>
+<h3>Running Scripts</h3>
+<p>Again if you don't want to mess with you PATH, you can simply do in your window command prompt:</p>
+<ol>
+<li><code>C:\python\python &lt;path to your script&gt;</code></li>
+</ol>
+</div>
+        </div>
+        </article><article class="h-entry post-text"><header><h1 class="p-name entry-title header"><a href="posts/object-oriented-design-with-pandas/" class="u-url">Object-Oriented Design architecture with Pandas</a></h1>
             <div class="metadata">
                 <span class="byline author vcard">
                         <i class="mdi-action-face-unlock"></i>

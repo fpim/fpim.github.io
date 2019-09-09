@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Setting up python's Windows embeddable distribution (properly) | from python import me</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://fpim.github.io/posts/setting-up-python-windows-embeddable-environment-properly/">
+<!--[if lt IE 9]>
+            <script src="../../assets/js/html5shiv.min.js"></script>
+            <script src="../../assets/js/respond.min.js"></script>
+        <![endif]--><meta name="author" content="fyim">
+<link rel="prev" href="../object-oriented-design-with-pandas/" title="Object-Oriented Design architecture with Pandas" type="text/html">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-default header-panel shadow-z-3" role="navigation"><div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-3">
+            <h1 class="title-blog">
+                <a href="https://fpim.github.io/">
+                        <span id="blog-title">from python import me</span>
+                    </a>
+            </h1>
+          </div>
+          <div class="col-xs-9">
+            <a id="hamburger" class="btn btn-raised" href="javascript:void(0);" onclick="menuToggle();">☰</a>
+          </div>
+        </div>
+      </div>
+<!-- /.container-fluid -->
+</nav><div class="container-fluid main" id="content" role="main">
+        <div class="row">
+            <nav class="col-xs-12 col-sm-3 menu"><ul>
+<li class="withripple"><a href="../../archive.html">Archive</a></li>
+                <li class="withripple"><a href="../../categories/">Tags</a></li>
+                <li class="withripple"><a href="../../rss.xml">RSS feed</a></li>
+
+                    
+                </ul>
+<ul></ul></nav><div class="posts-material col-xs-12 col-sm-9">
+                <div class="col-xs-12 col-md-11 content-material">
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Setting up python's Windows embeddable distribution (properly)</a></h1>
+<hr>
+<div class="metadata">
+            <span class="byline author vcard">
+                <a href=".">
+                        <i class="mdi-action-face-unlock"></i>
+                    fyim
+                </a>
+            </span>
+            <span class="dateline">
+                <a href="." rel="bookmark"><i class="mdi-device-access-time"></i>
+                    <time class="published dt-published" datetime="2019-09-09T14:48:18+08:00" itemprop="datePublished" title="2019-09-09 14:48">2019-09-09 14:48</time></a>
+            </span>
+                <span class="commentline">            <a href="#disqus_thread" data-disqus-identifier="cache/posts/setting-up-python-windows-embeddable-environment-properly.html">Comments</a>
+
+</span>
+        </div>
+        
+        <hr></header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<h2>Embeddable distribution</h2>
+<p>If there is anything I like about Windows as a pythonist, it must be that 
+you can use <a href="https://docs.python.org/3/using/windows.html#windows-embeddable">embedded distribution</a> of python.  </p>
+<blockquote>
+<p>The embedded distribution is a ZIP file containing a minimal Python environment. 
+It is intended for acting as part of another application, rather than being directly 
+accessed by end-users.</p>
+</blockquote>
+<p>In my opinion, it is a portable, ready-to-ship virtualenv. However, the 
+embedded distribution comes with some limitation:</p>
+<blockquote>
+<p>Third-party packages should be installed by the application installer alongside 
+the embedded distribution. Using pip to manage dependencies as for a regular Python 
+installation is not supported with this distribution, though with some care it may be 
+possible to include and use pip for automatic updates. In general, third-party packages 
+should be treated as part of the application (“vendoring”) so that the developer can 
+ensure compatibility with newer versions before providing updates to users.</p>
+</blockquote>
+<p>Sounds scary right? It said it doesn't even support pip. Don't worry, follow
+these simple steps, you will have a fully workable embedded environment.</p>
+<h3>Get the distribution</h3>
+<ol>
+<li>Go to <a href="https://www.python.org/downloads/windows/">https://www.python.org/downloads/windows/</a>
+</li>
+<li>Choose the version python you like and download the corresponding <code>Windows x86-64 embeddable zip file</code>.</li>
+<li>Unzip the file. </li>
+</ol>
+<p>To make this tutorial easy to follow, I am assuming that you have downloaded <code>Python3.7</code> and unzipped it to
+<code>C:\python\</code>.</p>
+<h3>Get pip</h3>
+<p>The distribution does not have pip installed in place, you need to install it yourself:
+1. Download <code>get-pip.py</code> at <a href="https://bootstrap.pypa.io/get-pip.py">https://bootstrap.pypa.io/get-pip.py</a>
+2. Save it to <code>c:\python\get-pip.py</code>
+3. In command-line run <code>C:\python\python get-pip.py</code>
+4. pip is now installed</p>
+<h3>Config path</h3>
+<p>The runtime of this distribution doesn't have an empty string <code>''</code> added in <code>sys.path</code>,
+so that the <code>current directory</code> is not added into <code>sys.path</code>, to solve the problem,
+you need to:</p>
+<ol>
+<li>Open <code>C:\python\python37._pth</code>.</li>
+<li>Uncomment the line <code>#import site</code> and save.</li>
+<li>Create the following python file at <code>c:\python\sitecustomize.py</code>:</li>
+</ol>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>
+</pre>
+
+
+<h3>lib2to3 issue</h3>
+<p>You will encounter the following error when you install some packages:</p>
+<pre class="code literal-block"><span></span><span class="n">error</span><span class="p">:</span> <span class="p">[</span><span class="n">Errno</span> <span class="mi">0</span><span class="p">]</span> <span class="n">Error</span><span class="p">:</span> <span class="s1">'lib2to3</span><span class="se">\\</span><span class="s1">Grammar3.6.5.final.0.pickle'</span>
+</pre>
+
+
+<ol>
+<li>Unzip <code>C:\python\python37.zip</code> to a <code>new folder</code>
+</li>
+<li>Delete <code>C:\python\python37.zip</code>
+</li>
+<li>Rename the <code>new folder</code> to <code>python37.zip</code> </li>
+</ol>
+<p>Python's import module is able to treat zip file as folder however, it cannot
+read pickle file inside a zip file, so unzip it and rename it.</p>
+<h3>Running pip</h3>
+<p>If you don't want to mess with you PATH, you can simply do the following in your window command prompt:</p>
+<ol>
+<li><code>CD C:\python\Scripts</code></li>
+<li><code>C:\python\python pip install xxxxx</code></li>
+</ol>
+<h3>Running Scripts</h3>
+<p>Again if you don't want to mess with you PATH, you can simply do in your window command prompt:</p>
+<ol>
+<li><code>C:\python\python &lt;path to your script&gt;</code></li>
+</ol>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager">
+<li class="previous">
+                <a href="../object-oriented-design-with-pandas/" rel="prev" title="Object-Oriented Design architecture with Pandas">Previous post</a>
+            </li>
+        </ul></nav></aside><section class="comments"><h2>
+<i class="mdi-communication-forum"></i>Comments</h2>
+        <hr>
+<div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="from-python-import-me",
+            disqus_url="https://fpim.github.io/posts/setting-up-python-windows-embeddable-environment-properly/",
+        disqus_title="Setting up python's Windows embeddable distribution (properly)",
+        disqus_identifier="cache/posts/setting-up-python-windows-embeddable-environment-properly.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="from-python-import-me";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+            </div>
+        </div>
+        <button class="btn btn-fab btn-raised btn-material-green btn-footer" data-toggle="modal" data-target="#footer-dialog">
+            <i class="mdi-communication-message"></i>
+        </button>
+        <div id="footer-dialog" class="modal fade" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">from python import me credits</h4>
+              </div>
+              <div class="modal-body">
+                    Contents © 2019         <a href="mailto:frompythonimportme@gmail.com">fyim</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+                    
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal">Ok</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="source-button">
+    <a class="btn btn-fab btn-raised btn-material-indigo" target="_blank" href="index.md" title="Source">
+        <i class="mdi-file-cloud-download"></i>
+    </a>
+
+        </div>
+</div>
+
+
+            <script src="../../assets/js/all-nocdn.js"></script><script>
+
+            $(document).ready(function() {
+                // This command is used to initialize some elements and make them work properly
+                $.material.init();
+            });
+
+            $(window).on("resize", function() {
+                if($(window).width() > 767) {
+                  $("html, body").height($(window).height());
+                  $(".main, .menu").height($(window).height() - $(".header-panel").outerHeight() - 76 );
+                  $(".posts-material").height($(window).height());
+                } else {
+                  $("html, body").css('height', '');
+                  $(".main, .menu").css('height', '');
+                  $(".posts-material").css('height', '');
+                }
+            }).trigger("resize");
+
+            function menuToggle() {
+                $("nav.menu, ul").toggleClass('responsive', '');
+            }
+        </script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

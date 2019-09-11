@@ -88,5 +88,4 @@ Again if you don't want to mess with you PATH, you can simply do in your window 
 
 1. `C:\python\python <path to your script>`
 
-
-
+### Done!

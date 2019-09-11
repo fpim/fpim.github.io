@@ -112,7 +112,7 @@
 'copy_assets:output\\assets\\fonts\\RobotoDraftBold.woff2', (112128, 332)
 'render_pages', (112640, 56)
 'render_pages:output\\pages\\charts\\index.html', (382976, 7484)
-'sitemap:output\\sitemap.xml', (370688, 4146)
+'sitemap:output\\sitemap.xml', (370688, 4145)
 'copy_assets:output\\assets\\js\\jquery.min.map', (122880, 317)
 'render_sources:output\\pages\\charts\\index.rst', (123392, 241)
 'copy_assets:output\\assets\\fonts\\glyphicons-halflings-regular.ttf', (123904, 358)

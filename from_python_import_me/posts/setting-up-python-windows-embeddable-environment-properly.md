@@ -55,7 +55,7 @@ you need to:
 
 1. Open `C:\python\python37._pth`.
 2. Uncomment the line `#import site` and save.
-3. Create the following python file at `c:\python\sitecustomize.py`:
+3. Create the a new .py file and save it as `c:\python\sitecustomize.py`:
 ```python
 import sys
 sys.path.insert(0, '')

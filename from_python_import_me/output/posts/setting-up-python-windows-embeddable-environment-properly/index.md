@@ -55,7 +55,7 @@ you need to:
 
 1. Open `C:\python\python37._pth`.
 2. Uncomment the line `#import site` and save.
-3. Create the a new .py file and save it as `c:\python\sitecustomize.py`:
+3. Create a new .py file and save it as `c:\python\sitecustomize.py`:
 ```python
 import sys
 sys.path.insert(0, '')
@@ -63,14 +63,14 @@ sys.path.insert(0, '')
 
 ## lib2to3 issue
  
-You will encounter the following error when you install some packages:
+You will encounter the following error when you try to install some packages:
 ```python
 error: [Errno 0] Error: 'lib2to3\\Grammar3.6.5.final.0.pickle'
 ```
 
 1. Unzip `C:\python\python37.zip` to a `new folder`
 2. Delete `C:\python\python37.zip`
-3. Rename the `new folder` to `python37.zip` 
+3. Rename the `new folder` to `python37.zip` (yes, a new folder called `python37.zip`)
 
 Python's import module is able to treat zip file as folder however, it cannot
 read pickle file inside a zip file, so unzip it and rename it.

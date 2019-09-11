@@ -103,7 +103,7 @@ you need to:</p>
 <ol>
 <li>Open <code>C:\python\python37._pth</code>.</li>
 <li>Uncomment the line <code>#import site</code> and save.</li>
-<li>Create the a new .py file and save it as <code>c:\python\sitecustomize.py</code>:</li>
+<li>Create a new .py file and save it as <code>c:\python\sitecustomize.py</code>:</li>
 </ol>
 <pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">sys</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>
@@ -111,7 +111,7 @@ you need to:</p>
 
 
 <h3>lib2to3 issue</h3>
-<p>You will encounter the following error when you install some packages:</p>
+<p>You will encounter the following error when you try to install some packages:</p>
 <pre class="code literal-block"><span></span><span class="n">error</span><span class="p">:</span> <span class="p">[</span><span class="n">Errno</span> <span class="mi">0</span><span class="p">]</span> <span class="n">Error</span><span class="p">:</span> <span class="s1">'lib2to3</span><span class="se">\\</span><span class="s1">Grammar3.6.5.final.0.pickle'</span>
 </pre>
 
@@ -121,7 +121,7 @@ you need to:</p>
 </li>
 <li>Delete <code>C:\python\python37.zip</code>
 </li>
-<li>Rename the <code>new folder</code> to <code>python37.zip</code> </li>
+<li>Rename the <code>new folder</code> to <code>python37.zip</code> (yes, a new folder called <code>python37.zip</code>)</li>
 </ol>
 <p>Python's import module is able to treat zip file as folder however, it cannot
 read pickle file inside a zip file, so unzip it and rename it.</p>

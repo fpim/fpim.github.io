@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>from python import me</title><link>https://fpim.github.io/</link><description>python tricks and tips</description><atom:link href="https://fpim.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:frompythonimportme@gmail.com"&gt;fyim&lt;/a&gt; </copyright><lastBuildDate>Wed, 11 Sep 2019 01:46:58 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Setting up python's Windows embeddable distribution (properly)</title><link>https://fpim.github.io/posts/setting-up-python-windows-embeddable-environment-properly/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;h2&gt;Embeddable distribution&lt;/h2&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>from python import me</title><link>https://fpim.github.io/</link><description>python tricks and tips</description><atom:link href="https://fpim.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:frompythonimportme@gmail.com"&gt;fyim&lt;/a&gt; </copyright><lastBuildDate>Wed, 11 Sep 2019 02:02:57 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Setting up python's Windows embeddable distribution (properly)</title><link>https://fpim.github.io/posts/setting-up-python-windows-embeddable-environment-properly/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;h2&gt;Embeddable distribution&lt;/h2&gt;
 &lt;p&gt;If there is anything I like about Windows as a pythonist, it must be that 
 you can use &lt;a href="https://docs.python.org/3/using/windows.html#windows-embeddable"&gt;embedded distribution&lt;/a&gt; of python.  &lt;/p&gt;
 &lt;blockquote&gt;
@@ -64,7 +64,7 @@ read pickle file inside a zip file, so unzip it and rename it.&lt;/p&gt;
 &lt;p&gt;If you don't want to mess with you PATH, you can simply do the following in your window command prompt:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;CD C:\python\Scripts&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;C:\python\python pip install xxxxx&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;pip install xxxxx&lt;/code&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3&gt;Running Scripts&lt;/h3&gt;
 &lt;p&gt;Again if you don't want to mess with you PATH, you can simply do in your window command prompt:&lt;/p&gt;

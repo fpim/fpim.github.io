@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>from python import me</title><link>https://fpim.github.io/</link><description>python tricks and tips</description><atom:link href="https://fpim.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:frompythonimportme@gmail.com"&gt;fyim&lt;/a&gt; </copyright><lastBuildDate>Wed, 11 Sep 2019 01:41:56 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Setting up python's Windows embeddable distribution (properly)</title><link>https://fpim.github.io/posts/setting-up-python-windows-embeddable-environment-properly/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;h2&gt;Embeddable distribution&lt;/h2&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>from python import me</title><link>https://fpim.github.io/</link><description>python tricks and tips</description><atom:link href="https://fpim.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:frompythonimportme@gmail.com"&gt;fyim&lt;/a&gt; </copyright><lastBuildDate>Wed, 11 Sep 2019 01:45:07 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Setting up python's Windows embeddable distribution (properly)</title><link>https://fpim.github.io/posts/setting-up-python-windows-embeddable-environment-properly/</link><dc:creator>fyim</dc:creator><description>&lt;div&gt;&lt;h2&gt;Embeddable distribution&lt;/h2&gt;
 &lt;p&gt;If there is anything I like about Windows as a pythonist, it must be that 
 you can use &lt;a href="https://docs.python.org/3/using/windows.html#windows-embeddable"&gt;embedded distribution&lt;/a&gt; of python.  &lt;/p&gt;
 &lt;blockquote&gt;
@@ -40,7 +40,7 @@ you need to:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Open &lt;code&gt;C:\python\python37._pth&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;Uncomment the line &lt;code&gt;#import site&lt;/code&gt; and save.&lt;/li&gt;
-&lt;li&gt;Create the a new .py file and save it as &lt;code&gt;c:\python\sitecustomize.py&lt;/code&gt;:&lt;/li&gt;
+&lt;li&gt;Create a new .py file and save it as &lt;code&gt;c:\python\sitecustomize.py&lt;/code&gt;:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
 &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -48,7 +48,7 @@ you need to:&lt;/p&gt;
 
 
 &lt;h3&gt;lib2to3 issue&lt;/h3&gt;
-&lt;p&gt;You will encounter the following error when you install some packages:&lt;/p&gt;
+&lt;p&gt;You will encounter the following error when you try to install some packages:&lt;/p&gt;
 &lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;error&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Errno&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Error&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'lib2to3&lt;/span&gt;&lt;span class="se"&gt;\\&lt;/span&gt;&lt;span class="s1"&gt;Grammar3.6.5.final.0.pickle'&lt;/span&gt;
 &lt;/pre&gt;
 
@@ -56,7 +56,7 @@ you need to:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Unzip &lt;code&gt;C:\python\python37.zip&lt;/code&gt; to a &lt;code&gt;new folder&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Delete &lt;code&gt;C:\python\python37.zip&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Rename the &lt;code&gt;new folder&lt;/code&gt; to &lt;code&gt;python37.zip&lt;/code&gt; &lt;/li&gt;
+&lt;li&gt;Rename the &lt;code&gt;new folder&lt;/code&gt; to &lt;code&gt;python37.zip&lt;/code&gt; (yes, a new folder called &lt;code&gt;python37.zip&lt;/code&gt;)&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;Python's import module is able to treat zip file as folder however, it cannot
 read pickle file inside a zip file, so unzip it and rename it.&lt;/p&gt;

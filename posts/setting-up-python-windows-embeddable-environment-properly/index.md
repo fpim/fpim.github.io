@@ -80,7 +80,7 @@ read pickle file inside a zip file, so unzip it and rename it.
 If you don't want to mess with you PATH, you can simply do the following in your window command prompt:
 
 1. `CD C:\python\Scripts`
-2. `C:\python\python pip install xxxxx`
+2. `pip install xxxxx`
 
 ## Running Scripts
 
